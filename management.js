@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const MASTER_PASSWORD = '0070';
     let allData = {};
     let categories = [];
+    let selectedCategory = 'all'; // 'all' or category name
 
     const sampleData = {
         'AI 챗봇 모음': {
@@ -83,105 +84,91 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('bookmarkCategories', JSON.stringify(categories));
     }
 
+    function renderCategoryTabs() {
+        const categoryTabsContainer = document.getElementById('category-tabs');
+        categoryTabsContainer.innerHTML = '';
+
+        // All tab
+        const allTab = document.createElement('button');
+        allTab.className = `category-tab ${selectedCategory === 'all' ? 'active' : ''}`;
+        allTab.textContent = '전체';
+        allTab.addEventListener('click', () => {
+            selectedCategory = 'all';
+            renderCategoryTabs();
+            renderGroups();
+        });
+        categoryTabsContainer.appendChild(allTab);
+
+        // Category tabs
+        categories.forEach(categoryName => {
+            const tab = document.createElement('button');
+            tab.className = `category-tab ${selectedCategory === categoryName ? 'active' : ''}`;
+            tab.textContent = categoryName;
+            tab.addEventListener('click', () => {
+                selectedCategory = categoryName;
+                renderCategoryTabs();
+                renderGroups();
+            });
+
+            // Right-click for category actions
+            tab.addEventListener('contextmenu', (e) => {
+                e.preventDefault();
+                if (confirm(`'${categoryName}' 카테고리를 관리하시겠습니까?\n\n확인: 이름 변경\n취소: 삭제`)) {
+                    renameCategory(categoryName);
+                } else {
+                    deleteCategory(categoryName);
+                }
+            });
+
+            categoryTabsContainer.appendChild(tab);
+        });
+
+        // Uncategorized tab
+        const uncategorizedCount = Object.values(allData).filter(g => !g.category).length;
+        if (uncategorizedCount > 0) {
+            const uncategorizedTab = document.createElement('button');
+            uncategorizedTab.className = `category-tab ${selectedCategory === 'uncategorized' ? 'active' : ''}`;
+            uncategorizedTab.textContent = '미분류';
+            uncategorizedTab.addEventListener('click', () => {
+                selectedCategory = 'uncategorized';
+                renderCategoryTabs();
+                renderGroups();
+            });
+            categoryTabsContainer.appendChild(uncategorizedTab);
+        }
+    }
+
     function renderGroups() {
         groupList.innerHTML = '';
+
         if (Object.keys(allData).length === 0) {
             groupList.innerHTML = '<p class="text-center text-muted">아직 생성된 그룹이 없습니다. 새 그룹을 추가해보세요!</p>';
             return;
         }
 
-        // Group bookmarks by category
-        const groupsByCategory = {};
-        const uncategorized = [];
-
-        Object.keys(allData).forEach(groupName => {
+        // Filter groups by selected category
+        const filteredGroups = Object.keys(allData).filter(groupName => {
             const groupData = allData[groupName];
-            if (groupData.category && categories.includes(groupData.category)) {
-                if (!groupsByCategory[groupData.category]) {
-                    groupsByCategory[groupData.category] = [];
-                }
-                groupsByCategory[groupData.category].push(groupName);
+            if (selectedCategory === 'all') {
+                return true;
+            } else if (selectedCategory === 'uncategorized') {
+                return !groupData.category || !categories.includes(groupData.category);
             } else {
-                uncategorized.push(groupName);
+                return groupData.category === selectedCategory;
             }
         });
 
-        // Render categories
-        categories.forEach(categoryName => {
-            if (groupsByCategory[categoryName] && groupsByCategory[categoryName].length > 0) {
-                renderCategory(categoryName, groupsByCategory[categoryName]);
-            }
-        });
-
-        // Render uncategorized groups
-        if (uncategorized.length > 0) {
-            renderCategory('미분류', uncategorized);
-        }
-    }
-
-    function renderCategory(categoryName, groupNames) {
-        const categorySection = document.createElement('div');
-        categorySection.className = 'category-section mb-4';
-
-        const categoryHeader = document.createElement('div');
-        categoryHeader.className = 'category-header d-flex justify-content-between align-items-center mb-3';
-
-        const headerLeft = document.createElement('div');
-        headerLeft.className = 'd-flex align-items-center';
-
-        const toggleBtn = document.createElement('button');
-        toggleBtn.className = 'btn btn-sm btn-link text-decoration-none me-2 category-toggle';
-        toggleBtn.innerHTML = '▼';
-        toggleBtn.title = '접기/펼치기';
-
-        const categoryTitle = document.createElement('h3');
-        categoryTitle.className = 'category-title mb-0';
-        categoryTitle.textContent = `${categoryName} (${groupNames.length})`;
-
-        headerLeft.appendChild(toggleBtn);
-        headerLeft.appendChild(categoryTitle);
-        categoryHeader.appendChild(headerLeft);
-
-        if (categoryName !== '미분류') {
-            const categoryActions = document.createElement('div');
-
-            const renameCategoryBtn = document.createElement('button');
-            renameCategoryBtn.className = 'btn btn-sm btn-outline-secondary me-1';
-            renameCategoryBtn.textContent = '이름 변경';
-            renameCategoryBtn.addEventListener('click', () => renameCategory(categoryName));
-
-            const deleteCategoryBtn = document.createElement('button');
-            deleteCategoryBtn.className = 'btn btn-sm btn-outline-danger';
-            deleteCategoryBtn.textContent = '카테고리 삭제';
-            deleteCategoryBtn.addEventListener('click', () => deleteCategory(categoryName));
-
-            categoryActions.appendChild(renameCategoryBtn);
-            categoryActions.appendChild(deleteCategoryBtn);
-            categoryHeader.appendChild(categoryActions);
+        if (filteredGroups.length === 0) {
+            groupList.innerHTML = '<p class="text-center text-muted">이 카테고리에 그룹이 없습니다.</p>';
+            return;
         }
 
-        const categoryContent = document.createElement('div');
-        categoryContent.className = 'category-content';
-
-        const groupGrid = document.createElement('div');
-        groupGrid.className = 'group-grid';
-
-        groupNames.forEach((groupName) => {
+        // Render filtered groups
+        filteredGroups.forEach(groupName => {
             const groupData = allData[groupName];
             const card = createGroupCard(groupName, groupData);
-            groupGrid.appendChild(card);
+            groupList.appendChild(card);
         });
-
-        // Toggle collapse/expand
-        toggleBtn.addEventListener('click', () => {
-            categoryContent.classList.toggle('collapsed');
-            toggleBtn.innerHTML = categoryContent.classList.contains('collapsed') ? '▶' : '▼';
-        });
-
-        categoryContent.appendChild(groupGrid);
-        categorySection.appendChild(categoryHeader);
-        categorySection.appendChild(categoryContent);
-        groupList.appendChild(categorySection);
     }
 
     function createGroupCard(groupName, groupData) {
@@ -313,12 +300,27 @@ document.addEventListener('DOMContentLoaded', () => {
                 bookmarks: []
             };
             saveAllData();
+            renderCategoryTabs();
             renderGroups();
             groupNameInput.value = '';
         } else if (allData.hasOwnProperty(newGroupName)){
             alert('이미 존재하는 그룹 이름입니다.');
         } else {
             alert('그룹 이름을 입력해주세요.');
+        }
+    }
+
+    function addCategory() {
+        const newCategoryName = prompt('새 카테고리 이름을 입력하세요:');
+        if (newCategoryName && newCategoryName.trim() !== '') {
+            const trimmedName = newCategoryName.trim();
+            if (categories.includes(trimmedName)) {
+                alert('이미 존재하는 카테고리 이름입니다.');
+                return;
+            }
+            categories.push(trimmedName);
+            saveCategories();
+            renderCategoryTabs();
         }
     }
 
@@ -335,6 +337,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (confirm(`'${groupName}' 그룹을 정말 삭제하시겠습니까? 그룹 안의 모든 북마크가 사라집니다.`)) {
             delete allData[groupName];
             saveAllData();
+            renderCategoryTabs();
             renderGroups();
         }
     }
@@ -404,6 +407,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             allData[groupName].category = category;
             saveAllData();
+            renderCategoryTabs();
             renderGroups();
         }
     }
@@ -428,6 +432,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
             saveAllData();
+            renderCategoryTabs();
             renderGroups();
         }
     }
@@ -449,12 +454,16 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
         saveAllData();
+        selectedCategory = 'all'; // Reset to all after deleting category
+        renderCategoryTabs();
         renderGroups();
     }
 
     // 초기화
     addGroupForm.addEventListener('submit', addGroup);
+    document.getElementById('add-category-btn').addEventListener('click', addCategory);
     loadAllData();
+    renderCategoryTabs();
     renderGroups();
 
     // 검색 기능
