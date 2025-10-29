@@ -28,13 +28,62 @@
     #search-input::placeholder {
         text-align: center;
         color: grey;
-    }    
-    
+    }
+
+    /* Category Tabs */
+    .category-tabs-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem;
+        background: white;
+        border-radius: 0.5rem;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+    }
+
+    .category-tabs {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        flex: 1;
+    }
+
+    .category-tab {
+        padding: 0.5rem 1.25rem;
+        border: 2px solid #dee2e6;
+        background: white;
+        border-radius: 2rem;
+        font-size: 0.95rem;
+        font-weight: 500;
+        color: #495057;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        white-space: nowrap;
+    }
+
+    .category-tab:hover {
+        border-color: #0d6efd;
+        color: #0d6efd;
+        background: #f8f9ff;
+    }
+
+    .category-tab.active {
+        background: linear-gradient(135deg, #0d6efd, #6f42c1);
+        color: white;
+        border-color: transparent;
+        box-shadow: 0 2px 8px rgba(13, 110, 253, 0.3);
+    }
+
+    .category-management {
+        flex-shrink: 0;
+    }
+
     .group-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 1.5rem;
-}
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 1.5rem;
+    }
 
 .group-card {
     background-color: white;
