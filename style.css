@@ -28,13 +28,54 @@
     #search-input::placeholder {
         text-align: center;
         color: grey;
-    }    
-    
+    }
+
+    /* Category Sections */
+    .category-section {
+        margin-bottom: 2rem;
+    }
+
+    .category-header {
+        padding: 0.75rem 1rem;
+        background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+        border-radius: 0.5rem;
+        margin-bottom: 1rem;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    .category-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #495057;
+        margin: 0;
+    }
+
+    .category-toggle {
+        font-size: 1.2rem;
+        color: #6c757d;
+        padding: 0;
+        transition: transform 0.3s ease;
+    }
+
+    .category-toggle:hover {
+        color: #495057;
+    }
+
+    .category-content {
+        transition: max-height 0.3s ease, opacity 0.3s ease;
+        overflow: hidden;
+    }
+
+    .category-content.collapsed {
+        max-height: 0 !important;
+        opacity: 0;
+    }
+
     .group-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 1.5rem;
-}
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 1.5rem;
+    }
 
 .group-card {
     background-color: white;
