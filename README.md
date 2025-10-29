@@ -40,20 +40,28 @@
    - **Output Directory**: (비워두기)
 5. "Deploy" 클릭
 
-### 2. 모든 브랜치 자동 배포 활성화
+### 2. 작업 브랜치를 Production으로 자동 배포 설정
 
-Vercel 프로젝트 설정에서:
+**중요**: 어떤 브랜치에서 작업하더라도 자동으로 Production에 배포되도록 설정하려면:
 
-1. 프로젝트 → Settings → Git
-2. **Production Branch**: `main` 또는 기본 브랜치 설정
-3. **Deploy Hooks**: 모든 브랜치 배포 자동 활성화 (기본적으로 활성화됨)
+#### GitHub 기본 브랜치 변경:
+1. GitHub 저장소 → **Settings** → **Branches**
+2. **Default branch** 섹션에서 현재 작업 브랜치로 변경
+   - 예: `claude/project-check-011CUbHw14BAeuTGrd13idn1`
+3. **Update** 클릭
+
+#### Vercel 자동 연동:
+- Vercel은 GitHub의 기본 브랜치를 자동으로 Production으로 인식
+- 별도 설정 불필요
+- Push 즉시 Production URL에 자동 배포
 
 ### 3. 배포 동작 방식
 
-- **Main/Master 브랜치**: Production 배포 (실제 서비스 URL)
-- **기타 모든 브랜치**: Preview 배포 (고유한 미리보기 URL 생성)
-- Push 즉시 자동으로 배포 시작
-- 빌드 및 배포 상태는 GitHub PR에 자동 코멘트
+- **GitHub 기본 브랜치**: Production 배포 (실제 서비스 URL)
+  - 현재: `claude/project-check-011CUbHw14BAeuTGrd13idn1`
+- **기타 모든 브랜치**: Preview 배포 (고유한 미리보기 URL)
+- **자동 배포**: Push 즉시 자동으로 배포 시작
+- **상태 확인**: GitHub 및 Vercel 대시보드에서 확인 가능
 
 ### 4. 환경 변수 (필요시)
 
