@@ -117,31 +117,6 @@
     border-radius: 0.5rem;
     box-shadow: 0 4px 6px rgba(0,0,0,0.05);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
-    position: relative; /* For positioning the QR toggle button */
-}
-
-.qr-toggle-btn {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: none;
-    border: none;
-    font-size: 1.2rem;
-    cursor: pointer;
-    color: #dee2e6;
-    z-index: 10;
-}
-
-.qr-container {
-    display: none; /* Hidden by default */
-    padding: 1rem;
-    background-color: #f8f9fa;
-    border-radius: 0.25rem;
-    margin-top: 1rem;
-}
-
-.qr-container.visible {
-    display: block; /* Shown when toggled */
 }
 
 .group-card:hover {
@@ -159,17 +134,6 @@
     color: #0d6efd;
     margin-bottom: 1rem;
 }
-
-@keyframes flash-success {
-    0% { box-shadow: 0 0 7px 4px rgba(25, 135, 84, 0); }
-    50% { box-shadow: 0 0 7px 4px rgba(25, 135, 84, 0.6); }
-    100% { box-shadow: 0 0 7px 4px rgba(25, 135, 84, 0); }
-}
-
-.qr-regenerated {
-    animation: flash-success 1s ease;
-}
-
 
 /* --- Viewer Page Styles --- */
 .viewer-page, .viewer-page html {

@@ -874,12 +874,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const cardBody = document.createElement('div');
         cardBody.className = 'card-body d-flex flex-column';
 
-        // QR Code Toggle Button
-        const qrToggleBtn = document.createElement('button');
-        qrToggleBtn.className = 'qr-toggle-btn';
-        qrToggleBtn.innerHTML = '&#9635;';
-        qrToggleBtn.title = 'QR코드 보기/숨기기';
-
         const title = document.createElement('h5');
         title.className = 'card-title';
         title.textContent = groupName;
@@ -891,22 +885,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const bookmarkCount = document.createElement('p');
         bookmarkCount.className = 'card-text text-muted small flex-grow-1';
         bookmarkCount.textContent = `북마크 ${groupData.bookmarks.length}개`;
-
-        // Hidden QR Code Container
-        const qrContainer = document.createElement('div');
-        qrContainer.className = 'qr-container';
-
-        qrToggleBtn.addEventListener('click', () => {
-            if (qrContainer.innerHTML === '') {
-                const groupURL = new URL(`viewer.html?group=${encodeURIComponent(groupName)}`, window.location.href).href;
-                new QRCode(qrContainer, {
-                    text: groupURL,
-                    width: 128,
-                    height: 128,
-                });
-            }
-            qrContainer.classList.toggle('visible');
-        });
 
         const groupURL = new URL(`viewer.html?group=${encodeURIComponent(groupName)}`, window.location.href).href;
         const viewLink = document.createElement('a');
@@ -952,11 +930,9 @@ document.addEventListener('DOMContentLoaded', () => {
         buttonGroup.appendChild(passwordBtn);
         buttonGroup.appendChild(deleteBtn);
 
-        cardBody.appendChild(qrToggleBtn);
         cardBody.appendChild(title);
         cardBody.appendChild(description);
         cardBody.appendChild(bookmarkCount);
-        cardBody.appendChild(qrContainer);
         cardBody.appendChild(viewLink);
         cardBody.appendChild(buttonGroup);
         card.appendChild(cardBody);
